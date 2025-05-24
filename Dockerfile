@@ -1,11 +1,15 @@
-FROM node:16
+FROM jenkins/jenkins:lts-jdk11
 
-WORKDIR /usr/src/app
+USER root
 
-COPY package*.json ./
-RUN npm install
+# Install Node.js (18.x)
+RUN apt-get update && \
+    apt-get install -y curl gnupg && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 
-COPY . .
+# Optional: verify versions
+RUN node -v && npm -v
 
-EXPOSE 3000
-CMD ["node", "server.js"]
+# Set back to jenkins user
+USER jenkins
